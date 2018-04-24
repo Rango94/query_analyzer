@@ -4,6 +4,7 @@ import numpy as np
 class query_terminator:
     path=""
     querys=[]
+    querys_aft=[]
     cates={}
     pattern_path=""
     conflict_=[]
@@ -13,9 +14,16 @@ class query_terminator:
     patterns_detail={}
     patterns=[]
     Flag=False
-
+    nor={}
     def __init__(self,path):
         self.path=path
+        norfile=open("normalization.txt","r",encoding="utf-8")
+        line=norfile.readline()
+        while line!="":
+            line=line.split(":")
+            self.nor[line[0]]=line[1].replace("\n","").split(" ")
+            line=norfile.readline()
+        norfile.close()
         file = open(path, "r", encoding="utf-8")
         line=file.readline()
         while line!="":
@@ -29,7 +37,7 @@ class query_terminator:
                 continue
             line=line.replace("\n","").split("\t")
             try:
-                line=[line[self.que["query"]],line[self.que["类别"]],line[self.que["pv"]]]
+                line=[self.normalization(line[self.que["query"]]),line[self.que["类别"]],line[self.que["pv"]],line[self.que["query"]]]
                 self.querys.append(line)
                 self.cates[line[1]]=1
             except:
@@ -138,7 +146,7 @@ class query_terminator:
                 catetotal[i[1]]=int(i[2])
             tmp_patt=[]
             for j in self.patterns:
-                if re.search(j[0],i[0].replace("湿疹","疾病").replace("脱发","疾病")):
+                if re.search(j[0],i[0]):
                     tmp_patt.append(j)
             if len(tmp_patt)>1 and len(set(np.array(tmp_patt)[:,1]))!=1:
                 tmp=""
@@ -147,7 +155,7 @@ class query_terminator:
                         tmp+=kk+"-->"
                     tmp+="||"
                 tmp="["+tmp.rstrip()+"]"
-                self.conflict_.append([i[0],int(i[2]),i[1],tmp])
+                self.conflict_.append([i[0],int(i[2]),i[1],i[3],tmp])
             if i[1] in tmp_patt:
                 confus[self.cates[i[1]],self.cates[i[1]]]+=int(i[2])
             if len(tmp_patt)==0:
@@ -207,7 +215,7 @@ class query_terminator:
                             tmp += kk + '-->'
                         tmp += "||"
                     tmp = "[" + tmp.rstrip() + "]"
-                    self.conflict_.append([i[0], int(i[2]), i[1], tmp])
+                    self.conflict_.append([i[0], int(i[2]), i[1],i[3],tmp])
             self.conflict_.sort(key=lambda x: x[1], reverse=True)
             for i in self.conflict_:
                 print(i)
@@ -241,6 +249,15 @@ class query_terminator:
             tmp.sort(key=lambda x: x[2], reverse=True)
             for i in tmp:
                 print(i)
+
+    def normalization(self,query):
+        for i in self.nor:
+            for term in self.nor[i]:
+                if term in query:
+                    query=query.replace(term,i)
+        return query
+
+
 
 
 
