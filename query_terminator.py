@@ -100,8 +100,8 @@ class query_terminator:
                     if WP:
                         print(i[0],i[2],"----------------------------------------")
             if WP:
-                print(cate,"已匹配pv：",matchpv,"总pv：",totalpv,"比例",matchpv/totalpv)
-                print(cate,"已匹配数量：",matchnum,"总数量：",len(subquerys),"比例",matchnum/len(subquerys))
+                print(cate,"已匹配pv：",matchpv,"总pv：",totalpv,"比例",'%.4f'%(matchpv/totalpv))
+                print(cate,"已匹配数量：",matchnum,"总数量：",len(subquerys),"比例",'%.4f'%(matchnum/len(subquerys)))
             return [[matchpv,totalpv],[matchnum,len(subquerys)]]
 
     def _all_match_with_pattern(self,WP=True):
@@ -119,8 +119,8 @@ class query_terminator:
             totalnum+=tmp[1][1]
             matchnum+=tmp[1][0]
         if WP:
-            print("已匹配pv：", matchpv, "总pv：", totalpv, "比例", matchpv / totalpv)
-            print("已匹配数量：", matchnum, "总数量：", totalnum, "比例", matchnum / totalnum)
+            print("已匹配pv：", matchpv, "总pv：", totalpv, "比例", '%.4f'%(matchpv / totalpv))
+            print("已匹配数量：", matchnum, "总数量：", totalnum, "比例", '%.4f'%(matchnum / totalnum))
 
     def confusion(self):
         _num=0
@@ -174,7 +174,7 @@ class query_terminator:
         for i in range(len(cate)):
             zhtotal+=catetotal[cate[i]]
             zhed+=confus[i][i]
-            print(str(confus[i][i]/catetotal[cate[i]])+"\t",end="")
+            print(str('%.4f'%(confus[i][i]/catetotal[cate[i]]))+"\t",end="")
         print("\n",end="")
         print("准确：", end="")
         zqtotal=0
@@ -185,9 +185,9 @@ class query_terminator:
             if sum(confus[i])==0:
                 print("0"+"\t",end="")
             else:
-                print(str(confus[i][i]/sum(confus[i]))+"\t",end="")
+                print(str('%.4f'%(confus[i][i]/sum(confus[i])))+"\t",end="")
         print("\n",end="")
-        print("总召回：",str(zhed/zhtotal),"总准确：",str(zqed/zqtotal))
+        print("总召回：",str('%.4f'%(zhed/zhtotal)),"总准确：",str('%.4f'%(zqed/zqtotal)))
         return confus
 
     def conflict(self):
