@@ -64,46 +64,37 @@ class query_terminator:
             for i in self.querys:
                 if i[1]==cate:
                     subquerys.append(i)
-            patterns=[]
-            for line in self.patterns:
-                if line[1]==cate:
-                    patterns.append(line)
+            # patterns=[]
+            # for line in self.patterns:
+            #     if line[1]==cate:
+            #         patterns.append(line)
             totalpv=0
             matchpv=0
             matchnum=0
             for i in subquerys:
                 totalpv+=int(i[2])
                 flag=True
-                notmatch=True
-                for j in patterns:
-                    if re.search(j[0],i[0].replace("湿疹","疾病").replace("脱发","疾病")):
-                        if notmatch:
-                            if self.Flag:
-                                if j[1]==i[1]:
-                                    try:
-                                        self.patterns_right[j[0]]+=int(i[2])
-                                    except:
-                                        self.patterns_right[j[0]] = int(i[2])
-                                try:
-                                    self.patterns_total[j[0]] += int(i[2])
-                                except:
-                                    self.patterns_total[j[0]] = int(i[2])
-                                try:
-                                    self.patterns_detail[j[0]].append([j[0], i[0],i[1], int(i[2])])
-                                except:
-                                    self.patterns_detail[j[0]] = [[j[0], i[0],i[1], int(i[2])]]
-                            flag=False
-                            matchpv+=int(i[2])
-                            matchnum+=1
-                            if WP:
-                                print(i,j[0],i[2])
-                        if flag==False:
-                            notmatch=False
-                        if not notmatch:
+                for j in self.patterns:
+                    if re.search(j[0],i[0]):
+                        if j[1]==i[1]:
+                            if flag:
+                                matchpv += int(i[2])
+                                matchnum += 1
+                                flag=False
                             try:
-                                self.patterns_total[j[0]] += int(i[2])
+                                self.patterns_right[j[0]]+=int(i[2])
                             except:
-                                self.patterns_total[j[0]] = int(i[2])
+                                self.patterns_right[j[0]] = int(i[2])
+                        try:
+                            self.patterns_total[j[0]] += int(i[2])
+                        except:
+                            self.patterns_total[j[0]] = int(i[2])
+                        try:
+                            self.patterns_detail[j[0]].append([j[0], i[0],i[3],i[1], int(i[2])])
+                        except:
+                            self.patterns_detail[j[0]] = [[j[0], i[0],i[3],i[1], int(i[2])]]
+                        if WP:
+                            print(i,j[0],j[1],i[2])
                 if flag:
                     if WP:
                         print(i[0],i[2],"----------------------------------------")
@@ -156,11 +147,16 @@ class query_terminator:
                     tmp+="||"
                 tmp="["+tmp.rstrip()+"]"
                 self.conflict_.append([i[0],int(i[2]),i[1],i[3],tmp])
-            if i[1] in tmp_patt:
-                confus[self.cates[i[1]],self.cates[i[1]]]+=int(i[2])
+
+
             if len(tmp_patt)==0:
                 print(i,"---------未匹配--------")
+                continue
+
+            if i[1] in np.array(tmp_patt)[:,1]:
+                confus[self.cates[i[1]],self.cates[i[1]]]+=int(i[2])
             else:
+                print(i[1],tmp_patt[0][1])
                 confus[self.cates[i[1]],self.cates[tmp_patt[0][1]]]+=int(i[2])
         self.conflict_.sort(key=lambda x: x[1], reverse=True)
         for i in confus:
@@ -206,7 +202,7 @@ class query_terminator:
             for i in self.querys:
                 tmp_patt = []
                 for j in self.patterns:
-                    if re.search(j[0], i[0].replace("湿疹", "疾病").replace("脱发", "疾病")):
+                    if re.search(j[0], i[0]):
                         tmp_patt.append(j)
                 if len(tmp_patt) > 1 and len(set(np.array(tmp_patt)[:, 1])) != 1:
                     tmp = ""

@@ -9,6 +9,7 @@ import query_terminator
 
 qt=query_terminator.query_terminator(sys.argv[1])
 qt.setpattern(sys.argv[2])
+
 # print(sys.argv[0],sys.argv[1])
 
 while True:
@@ -21,10 +22,16 @@ while True:
         qt.conflict()
     # 输出某一类别下的所有query匹配情况，category all命令为输出所有
     if str.startswith("category"):
-        qt.match_with_pattern(str.split(" ")[1])
+        try:
+            qt.match_with_pattern(str.split(" ")[1])
+        except:
+            continue
     # 输出所有pattern的表现情况，也就是每一个pattern匹配正确的pv量与总的匹配上的pv量
     if str=="pattern overview":
         qt.overview()
     # 输出某一pattern的具体表现情况,输出匹配的query，query实际的类别，pv量
     if str.startswith("pattern detail"):
-        qt.detail(str.split(" ")[2])
+        try:
+            qt.detail(str.split(" ")[2])
+        except:
+            continue
