@@ -147,8 +147,6 @@ class query_terminator:
                     tmp+="||"
                 tmp="["+tmp.rstrip()+"]"
                 self.conflict_.append([i[0],int(i[2]),i[1],i[3],tmp])
-
-
             if len(tmp_patt)==0:
                 print(i,"---------未匹配--------")
                 continue
@@ -156,7 +154,7 @@ class query_terminator:
             if i[1] in np.array(tmp_patt)[:,1]:
                 confus[self.cates[i[1]],self.cates[i[1]]]+=int(i[2])
             else:
-                print(i[1],tmp_patt[0][1])
+                print(i[3],i[0],i[2],i[1],tmp_patt,"*********匹配错误*********")
                 confus[self.cates[i[1]],self.cates[tmp_patt[0][1]]]+=int(i[2])
         self.conflict_.sort(key=lambda x: x[1], reverse=True)
         for i in confus:
