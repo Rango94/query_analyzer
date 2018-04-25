@@ -189,6 +189,17 @@ class query_terminator:
             else:
                 print(str('%.4f'%(confus[i][i]/sum(confus[i])))+"\t",end="")
         print("\n",end="")
+        for i in range(len(cate)):
+            zhtotal += catetotal[cate[i]]
+            zhed += confus[i][i]
+            zqtotal += sum(confus[i])
+            zqed += confus[i][i]
+            if sum(confus[i]) == 0:
+                print(cate[i], "召回：", str('%.4f' % (confus[i][i] / catetotal[cate[i]])), "准确：",
+                      0)
+            else:
+                print(cate[i], "召回：", str('%.4f' % (confus[i][i] / catetotal[cate[i]])), "准确：",
+                      str('%.4f' % (confus[i][i] / sum(confus[i]))))
         print("总召回：",str('%.4f'%(zhed/zhtotal)),"总准确：",str('%.4f'%(zqed/zqtotal)))
         return confus
 
